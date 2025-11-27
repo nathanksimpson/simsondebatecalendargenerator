@@ -478,6 +478,49 @@ form {
     font-size: 0.875rem;
 }
 
+/* Holiday Filter Section */
+.holiday-filter-section {
+    padding: 12px;
+    background: var(--bg-main);
+    border-radius: var(--border-radius);
+    margin-top: 8px;
+}
+
+.filter-group {
+    margin-bottom: 12px;
+}
+
+.filter-group:last-child {
+    margin-bottom: 0;
+}
+
+.filter-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.grade-checkboxes,
+.class-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.grade-checkboxes .checkbox-label,
+.class-checkboxes .checkbox-label {
+    font-size: 0.875rem;
+}
+
+.class-checkboxes:empty::before {
+    content: "No classes created yet";
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
 /* Custom Schedule Section */
 .custom-schedule-section {
     padding: 16px;

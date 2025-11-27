@@ -111,19 +111,20 @@
                         <label for="classLevel">Class Level</label>
                         <select id="classLevel" required>
                             <option value="">Select Level</option>
-                            <option value="1st-year">1st-year</option>
-                            <option value="2nd-year">2nd-year</option>
-                            <option value="3rd-year">3rd-year</option>
-                            <option value="4th-year">4th-year</option>
-                            <option value="Beginner">Beginner</option>
-                            <option value="Intermediate">Intermediate</option>
-                            <option value="Advanced">Advanced</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label for="classGrade">Grade</label>
-                        <input type="text" id="classGrade" required placeholder="e.g., Grade 5">
+                        <select id="classGrade" required>
+                            <option value="">Select Grade</option>
+                            <option value="중1">중1</option>
+                            <option value="중2">중2</option>
+                            <option value="중3">중3</option>
+                        </select>
                     </div>
                 </div>
 
@@ -269,39 +270,34 @@
                     <label>Applies To</label>
                     <div class="checkbox-group">
                         <label class="checkbox-label">
-                            <input type="checkbox" id="holidayAllLevels" checked>
-                            All Levels
+                            <input type="checkbox" id="holidayAllClasses" checked>
+                            All Classes
                         </label>
                     </div>
-                    <div id="holidayLevelCheckboxes" class="checkbox-group level-checkboxes" style="display: none;">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="holidayLevel" value="1st-year">
-                            1st-year
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="holidayLevel" value="2nd-year">
-                            2nd-year
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="holidayLevel" value="3rd-year">
-                            3rd-year
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="holidayLevel" value="4th-year">
-                            4th-year
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="holidayLevel" value="Beginner">
-                            Beginner
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="holidayLevel" value="Intermediate">
-                            Intermediate
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="holidayLevel" value="Advanced">
-                            Advanced
-                        </label>
+                    <div id="holidayFilterSection" class="holiday-filter-section" style="display: none;">
+                        <div class="filter-group">
+                            <label class="filter-label">By Grade:</label>
+                            <div class="checkbox-group grade-checkboxes">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="holidayGrade" value="중1">
+                                    중1
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="holidayGrade" value="중2">
+                                    중2
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="holidayGrade" value="중3">
+                                    중3
+                                </label>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">By Class Name:</label>
+                            <div id="holidayClassCheckboxes" class="checkbox-group class-checkboxes">
+                                <!-- Dynamically populated by JavaScript -->
+                            </div>
+                        </div>
                     </div>
                 </div>
 

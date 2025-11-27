@@ -69,8 +69,9 @@ const elements = {
     holidayEndDate: document.getElementById('holidayEndDate'),
     holidayBgColor: document.getElementById('holidayBgColor'),
     holidayTextColor: document.getElementById('holidayTextColor'),
-    holidayAllLevels: document.getElementById('holidayAllLevels'),
-    holidayLevelCheckboxes: document.getElementById('holidayLevelCheckboxes'),
+    holidayAllClasses: document.getElementById('holidayAllClasses'),
+    holidayFilterSection: document.getElementById('holidayFilterSection'),
+    holidayClassCheckboxes: document.getElementById('holidayClassCheckboxes'),
     deleteHolidayBtn: document.getElementById('deleteHolidayBtn'),
     
     // Print Modal
@@ -140,10 +141,13 @@ function setupEventListeners() {
     elements.deleteClassBtn.addEventListener('click', deleteClass);
     elements.deleteHolidayBtn.addEventListener('click', deleteHoliday);
     
-    // Holiday "All Levels" toggle
-    elements.holidayAllLevels.addEventListener('change', (e) => {
-        elements.holidayLevelCheckboxes.style.display = e.target.checked ? 'none' : 'grid';
+    // Holiday "All Classes" toggle
+    elements.holidayAllClasses.addEventListener('change', (e) => {
+        elements.holidayFilterSection.style.display = e.target.checked ? 'none' : 'block';
     });
+    
+    // Class Name auto-populate feature
+    elements.className.addEventListener('blur', handleClassNameAutoPopulate);
     
     // Holiday "Date Range" toggle
     elements.holidayIsRange.addEventListener('change', (e) => {
@@ -242,9 +246,16 @@ function openClassModal(classData = null) {
 }
 
 function openHolidayModal(holidayData = null) {
-    // Reset all level checkboxes
-    const levelCheckboxes = document.querySelectorAll('input[name="holidayLevel"]');
-    levelCheckboxes.forEach(cb => cb.checked = false);
+    // Populate class name checkboxes dynamically
+    populateHolidayClassCheckboxes();
+    
+    // Reset all grade checkboxes
+    const gradeCheckboxes = document.querySelectorAll('input[name="holidayGrade"]');
+    gradeCheckboxes.forEach(cb => cb.checked = false);
+    
+    // Reset all class checkboxes
+    const classCheckboxes = document.querySelectorAll('input[name="holidayClass"]');
+    classCheckboxes.forEach(cb => cb.checked = false);
     
     if (holidayData) {
         // Edit mode
@@ -272,14 +283,24 @@ function openHolidayModal(holidayData = null) {
         elements.holidayBgColor.value = holidayData.bgColor || '#fef3c7';
         elements.holidayTextColor.value = holidayData.textColor || '#b45309';
         
-        // Handle levels
-        const isAllLevels = !holidayData.levels || holidayData.levels.length === 0;
-        elements.holidayAllLevels.checked = isAllLevels;
-        elements.holidayLevelCheckboxes.style.display = isAllLevels ? 'none' : 'grid';
+        // Handle grades and class names
+        const hasGrades = holidayData.grades && holidayData.grades.length > 0;
+        const hasClassNames = holidayData.classNames && holidayData.classNames.length > 0;
+        const isAllClasses = !hasGrades && !hasClassNames;
         
-        if (!isAllLevels) {
-            levelCheckboxes.forEach(cb => {
-                cb.checked = holidayData.levels.includes(cb.value);
+        elements.holidayAllClasses.checked = isAllClasses;
+        elements.holidayFilterSection.style.display = isAllClasses ? 'none' : 'block';
+        
+        if (hasGrades) {
+            gradeCheckboxes.forEach(cb => {
+                cb.checked = holidayData.grades.includes(cb.value);
+            });
+        }
+        
+        if (hasClassNames) {
+            const classCheckboxes = document.querySelectorAll('input[name="holidayClass"]');
+            classCheckboxes.forEach(cb => {
+                cb.checked = holidayData.classNames.includes(cb.value);
             });
         }
         
@@ -294,11 +315,30 @@ function openHolidayModal(holidayData = null) {
         elements.holidayDateRange.style.display = 'none';
         elements.holidayBgColor.value = '#fef3c7';
         elements.holidayTextColor.value = '#b45309';
-        elements.holidayAllLevels.checked = true;
-        elements.holidayLevelCheckboxes.style.display = 'none';
+        elements.holidayAllClasses.checked = true;
+        elements.holidayFilterSection.style.display = 'none';
         elements.deleteHolidayBtn.style.display = 'none';
     }
     openModal(elements.holidayModal);
+}
+
+// Populate class name checkboxes for holiday modal
+function populateHolidayClassCheckboxes() {
+    const container = elements.holidayClassCheckboxes;
+    container.innerHTML = '';
+    
+    // Get unique class names
+    const classNames = [...new Set(appData.classes.map(c => c.name))];
+    
+    classNames.forEach(name => {
+        const label = document.createElement('label');
+        label.className = 'checkbox-label';
+        label.innerHTML = `
+            <input type="checkbox" name="holidayClass" value="${name}">
+            ${name}
+        `;
+        container.appendChild(label);
+    });
 }
 
 // ============================================
@@ -308,6 +348,29 @@ function getNextColor() {
     const color = colorPalette[colorIndex % colorPalette.length];
     colorIndex++;
     return color;
+}
+
+// ============================================
+// Auto-Populate Feature
+// ============================================
+function handleClassNameAutoPopulate() {
+    const className = elements.className.value.trim();
+    if (!className) return;
+    
+    // Only auto-populate when adding a new class (not editing)
+    if (elements.classId.value) return;
+    
+    // Find existing class with same name
+    const existingClass = appData.classes.find(c => c.name.toLowerCase() === className.toLowerCase());
+    
+    if (existingClass) {
+        // Auto-fill fields (except dates)
+        elements.classLevel.value = existingClass.level || '';
+        elements.classGrade.value = existingClass.grade || '';
+        elements.classBook.value = existingClass.book || '';
+        elements.classDayOfWeek.value = existingClass.dayOfWeek !== null ? existingClass.dayOfWeek : '';
+        elements.classColor.value = existingClass.color || getNextColor();
+    }
 }
 
 // ============================================
@@ -371,11 +434,16 @@ function deleteClass() {
 function handleHolidaySubmit(e) {
     e.preventDefault();
     
-    // Get selected levels
-    let levels = [];
-    if (!elements.holidayAllLevels.checked) {
-        const levelCheckboxes = document.querySelectorAll('input[name="holidayLevel"]:checked');
-        levels = Array.from(levelCheckboxes).map(cb => cb.value);
+    // Get selected grades and class names
+    let grades = [];
+    let classNames = [];
+    
+    if (!elements.holidayAllClasses.checked) {
+        const gradeCheckboxes = document.querySelectorAll('input[name="holidayGrade"]:checked');
+        grades = Array.from(gradeCheckboxes).map(cb => cb.value);
+        
+        const classCheckboxes = document.querySelectorAll('input[name="holidayClass"]:checked');
+        classNames = Array.from(classCheckboxes).map(cb => cb.value);
     }
     
     const isRange = elements.holidayIsRange.checked;
@@ -389,7 +457,8 @@ function handleHolidaySubmit(e) {
         endDate: isRange ? elements.holidayEndDate.value : null,
         bgColor: elements.holidayBgColor.value,
         textColor: elements.holidayTextColor.value,
-        levels: levels // Empty array means "all levels"
+        grades: grades,      // Empty array means "all"
+        classNames: classNames // Empty array means "all"
     };
     
     if (elements.holidayId.value) {
@@ -489,10 +558,10 @@ function calculateAutoLessonDates(classData) {
         current.setDate(current.getDate() + 7);
     }
     
-    // Filter out holidays that apply to this class level
+    // Filter out holidays that apply to this class
     const availableDates = allDates.filter(date => {
         const dateStr = formatDateISO(date);
-        return !isHolidayForClass(dateStr, classData.level);
+        return !isHolidayForClass(dateStr, classData);
     });
     
     // Apply compression logic
@@ -527,18 +596,30 @@ function calculateAutoLessonDates(classData) {
     };
 }
 
-// Check if a date is a holiday for a specific class level
-function isHolidayForClass(dateStr, classLevel) {
+// Check if a date is a holiday for a specific class
+function isHolidayForClass(dateStr, classData) {
     const holiday = getHolidayForDate(dateStr);
     if (!holiday) return false;
     
-    // If holiday has no levels specified, it applies to all
-    if (!holiday.levels || holiday.levels.length === 0) {
+    // If holiday has no grades and no classNames specified, it applies to all
+    const hasGrades = holiday.grades && holiday.grades.length > 0;
+    const hasClassNames = holiday.classNames && holiday.classNames.length > 0;
+    
+    if (!hasGrades && !hasClassNames) {
         return true;
     }
     
-    // Check if the class level is in the holiday's level list
-    return holiday.levels.includes(classLevel);
+    // Check if the class grade is in the holiday's grade list
+    if (hasGrades && holiday.grades.includes(classData.grade)) {
+        return true;
+    }
+    
+    // Check if the class name is in the holiday's class name list
+    if (hasClassNames && holiday.classNames.includes(classData.name)) {
+        return true;
+    }
+    
+    return false;
 }
 
 // Get holiday that covers a specific date (handles both single dates and ranges)
@@ -725,10 +806,20 @@ function createDayCell(dayNumber, isOtherMonth, holiday = null, events = [], dat
         const holidayDiv = document.createElement('div');
         holidayDiv.className = 'holiday-name';
         holidayDiv.style.color = holiday.textColor || '#b45309';
-        const levelText = (holiday.levels && holiday.levels.length > 0) 
-            ? ` (${holiday.levels.join(', ')})` 
-            : '';
-        holidayDiv.textContent = holiday.name + levelText;
+        
+        // Build applies-to text
+        let appliesText = '';
+        const hasGrades = holiday.grades && holiday.grades.length > 0;
+        const hasClassNames = holiday.classNames && holiday.classNames.length > 0;
+        
+        if (hasGrades || hasClassNames) {
+            const parts = [];
+            if (hasGrades) parts.push(holiday.grades.join(', '));
+            if (hasClassNames) parts.push(holiday.classNames.join(', '));
+            appliesText = ` (${parts.join('; ')})`;
+        }
+        
+        holidayDiv.textContent = holiday.name + appliesText;
         dayDiv.appendChild(holidayDiv);
     }
     
@@ -877,9 +968,16 @@ function updatePrintSummary() {
     });
     
     sortedHolidays.forEach(holiday => {
-        const appliesToText = (!holiday.levels || holiday.levels.length === 0) 
-            ? 'All Levels' 
-            : holiday.levels.join(', ');
+        const hasGrades = holiday.grades && holiday.grades.length > 0;
+        const hasClassNames = holiday.classNames && holiday.classNames.length > 0;
+        
+        let appliesToText = 'All Classes';
+        if (hasGrades || hasClassNames) {
+            const parts = [];
+            if (hasGrades) parts.push(`Grades: ${holiday.grades.join(', ')}`);
+            if (hasClassNames) parts.push(`Classes: ${holiday.classNames.join(', ')}`);
+            appliesToText = parts.join('; ');
+        }
         
         let dateText;
         if (holiday.isRange) {
@@ -956,10 +1054,89 @@ function loadData() {
     if (saved) {
         try {
             appData = JSON.parse(saved);
+            // Migrate old data format if needed
+            const migrated = migrateData(appData);
+            if (migrated) {
+                saveData(); // Save migrated data
+            }
         } catch (e) {
             console.error('Error loading saved data:', e);
         }
     }
+}
+
+// ============================================
+// Data Migration
+// ============================================
+const OLD_LEVEL_TO_GRADE_MAP = {
+    '1st-year': '중1',
+    '2nd-year': '중2',
+    '3rd-year': '중3',
+    '4th-year': '',
+    'Beginner': '',
+    'Intermediate': '',
+    'Advanced': ''
+};
+
+function migrateData(data) {
+    let migrated = false;
+    let migratedClasses = 0;
+    let migratedHolidays = 0;
+    
+    // Migrate classes
+    if (data.classes && data.classes.length > 0) {
+        data.classes.forEach(classData => {
+            // Check if this is old format (level has old values like "1st-year")
+            if (classData.level && OLD_LEVEL_TO_GRADE_MAP.hasOwnProperty(classData.level)) {
+                // Map old level to new grade
+                const newGrade = OLD_LEVEL_TO_GRADE_MAP[classData.level];
+                classData.grade = newGrade;
+                classData.level = ''; // Clear level for user to re-select A/B/C
+                migrated = true;
+                migratedClasses++;
+            }
+        });
+    }
+    
+    // Migrate holidays
+    if (data.holidays && data.holidays.length > 0) {
+        data.holidays.forEach(holiday => {
+            // Check if this is old format (has 'levels' instead of 'grades')
+            if (holiday.levels && !holiday.grades) {
+                // Convert old levels to new grades
+                const newGrades = [];
+                holiday.levels.forEach(level => {
+                    if (OLD_LEVEL_TO_GRADE_MAP.hasOwnProperty(level)) {
+                        const grade = OLD_LEVEL_TO_GRADE_MAP[level];
+                        if (grade && !newGrades.includes(grade)) {
+                            newGrades.push(grade);
+                        }
+                    }
+                });
+                
+                holiday.grades = newGrades;
+                holiday.classNames = holiday.classNames || [];
+                delete holiday.levels; // Remove old format
+                migrated = true;
+                migratedHolidays++;
+            }
+            
+            // Ensure new format fields exist
+            if (!holiday.grades) holiday.grades = [];
+            if (!holiday.classNames) holiday.classNames = [];
+        });
+    }
+    
+    // Show migration notice
+    if (migrated) {
+        const msg = `Data migrated to new format:\n` +
+            `- ${migratedClasses} class(es) updated\n` +
+            `- ${migratedHolidays} holiday(s) updated\n\n` +
+            `Please review and update Class Levels (A/B/C) for migrated classes.`;
+        setTimeout(() => alert(msg), 500);
+    }
+    
+    return migrated;
 }
 
 function exportData() {
@@ -988,6 +1165,10 @@ function importData(e) {
             // Validate structure
             if (imported.classes && imported.holidays) {
                 appData = imported;
+                
+                // Migrate old data format if needed
+                const migrated = migrateData(appData);
+                
                 saveData();
                 
                 // Update term start input
@@ -996,7 +1177,11 @@ function importData(e) {
                 }
                 
                 renderCalendar();
-                alert('Data imported successfully!');
+                
+                if (!migrated) {
+                    alert('Data imported successfully!');
+                }
+                // If migrated, the migration function already shows an alert
             } else {
                 alert('Invalid file format. Please select a valid calendar export file.');
             }
