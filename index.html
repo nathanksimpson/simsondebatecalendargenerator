@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Calendar Planner</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <h1>Class Calendar Planner</h1>
+            <div class="header-controls">
+                <button id="addClassBtn" class="btn btn-primary">+ Add Class</button>
+                <button id="addHolidayBtn" class="btn btn-secondary">+ Add Holiday</button>
+                <button id="exportBtn" class="btn btn-outline">Export</button>
+                <button id="importBtn" class="btn btn-outline">Import</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;">
+                <button id="printBtn" class="btn btn-outline">Print</button>
+            </div>
+        </header>
+
+        <!-- Term Selector -->
+        <div class="term-selector">
+            <label for="termStart">Term Start Month:</label>
+            <input type="month" id="termStart" value="">
+        </div>
+
+        <!-- Calendar Container -->
+        <div id="calendarContainer" class="calendar-container">
+            <!-- Calendars will be rendered here by JavaScript -->
+        </div>
+
+        <!-- Print Summary Section (hidden on screen, shown on print) -->
+        <div id="printSummary" class="print-summary">
+            <h2>Term Summary</h2>
+            
+            <div class="summary-section">
+                <h3>Classes</h3>
+                <table class="summary-table" id="classSummaryTable">
+                    <thead>
+                        <tr>
+                            <th>Class Name</th>
+                            <th>Level</th>
+                            <th>Grade</th>
+                            <th>Book</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Day</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Filled by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="summary-section">
+                <h3>Holidays</h3>
+                <table class="summary-table" id="holidaySummaryTable">
+                    <thead>
+                        <tr>
+                            <th>Holiday Name</th>
+                            <th>Date</th>
+                            <th>Applies To</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Filled by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="summary-section">
+                <h3>Lesson Schedule</h3>
+                <div id="lessonScheduleSummary">
+                    <!-- Filled by JavaScript -->
+                </div>
+            </div>
+
+            <div class="summary-section">
+                <h3>Compression Notes</h3>
+                <ul id="compressionNotes">
+                    <!-- Filled by JavaScript -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Class Modal -->
+    <div id="classModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="classModalTitle">Add New Class</h2>
+                <button class="modal-close" id="closeClassModal">&times;</button>
+            </div>
+            <form id="classForm">
+                <input type="hidden" id="classId" value="">
+                
+                <div class="form-group">
+                    <label for="className">Class Name</label>
+                    <input type="text" id="className" required placeholder="e.g., Debate">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="classLevel">Class Level</label>
+                        <select id="classLevel" required>
+                            <option value="">Select Level</option>
+                            <option value="1st-year">1st-year</option>
+                            <option value="2nd-year">2nd-year</option>
+                            <option value="3rd-year">3rd-year</option>
+                            <option value="4th-year">4th-year</option>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="classGrade">Grade</label>
+                        <input type="text" id="classGrade" required placeholder="e.g., Grade 5">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="classBook">Book</label>
+                    <input type="text" id="classBook" required placeholder="e.g., Debate 2025 Fall Nov. A">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="classStartDate">Start Date</label>
+                        <input type="date" id="classStartDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="classEndDate">End Date</label>
+                        <input type="date" id="classEndDate" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="classDayOfWeek">Day of Week</label>
+                        <select id="classDayOfWeek">
+                            <option value="">Select Day</option>
+                            <option value="0">Sunday</option>
+                            <option value="1">Monday</option>
+                            <option value="2">Tuesday</option>
+                            <option value="3">Wednesday</option>
+                            <option value="4">Thursday</option>
+                            <option value="5">Friday</option>
+                            <option value="6">Saturday</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="classColor">Color</label>
+                        <input type="color" id="classColor" value="#e67e22">
+                    </div>
+                </div>
+
+                <!-- Custom Schedule Option -->
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="customScheduleEnabled">
+                        Custom Schedule (manually pick dates for each lesson)
+                    </label>
+                </div>
+
+                <div id="customScheduleSection" class="custom-schedule-section" style="display: none;">
+                    <p class="section-hint">Select specific dates for each lesson day:</p>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customDay1">Day 1</label>
+                            <input type="date" id="customDay1">
+                        </div>
+                        <div class="form-group">
+                            <label for="customDay2">Day 2</label>
+                            <input type="date" id="customDay2">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customDay3">Day 3</label>
+                            <input type="date" id="customDay3">
+                        </div>
+                        <div class="form-group">
+                            <label for="customDay4">Day 4</label>
+                            <input type="date" id="customDay4">
+                        </div>
+                    </div>
+                    <div class="compression-options">
+                        <p class="section-hint">Compression options (leave date empty to combine):</p>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="compressDay12">
+                            Combine Day 1+2 on Day 1's date
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="compressDay34">
+                            Combine Day 3+4 on Day 3's date
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="deleteClassBtn" class="btn btn-danger" style="display: none;">Delete</button>
+                    <button type="submit" class="btn btn-primary">Save Class</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Holiday Modal -->
+    <div id="holidayModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="holidayModalTitle">Add Holiday</h2>
+                <button class="modal-close" id="closeHolidayModal">&times;</button>
+            </div>
+            <form id="holidayForm">
+                <input type="hidden" id="holidayId" value="">
+                
+                <div class="form-group">
+                    <label for="holidayName">Holiday/Event Name</label>
+                    <input type="text" id="holidayName" required placeholder="e.g., Thanksgiving">
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="holidayIsRange">
+                        Date Range (multiple days)
+                    </label>
+                </div>
+
+                <div id="holidaySingleDate" class="form-group">
+                    <label for="holidayDate">Date</label>
+                    <input type="date" id="holidayDate">
+                </div>
+
+                <div id="holidayDateRange" class="form-row" style="display: none;">
+                    <div class="form-group">
+                        <label for="holidayStartDate">Start Date</label>
+                        <input type="date" id="holidayStartDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="holidayEndDate">End Date</label>
+                        <input type="date" id="holidayEndDate">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="holidayBgColor">Background Color</label>
+                        <input type="color" id="holidayBgColor" value="#fef3c7">
+                    </div>
+                    <div class="form-group">
+                        <label for="holidayTextColor">Text Color</label>
+                        <input type="color" id="holidayTextColor" value="#b45309">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Applies To</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="holidayAllLevels" checked>
+                            All Levels
+                        </label>
+                    </div>
+                    <div id="holidayLevelCheckboxes" class="checkbox-group level-checkboxes" style="display: none;">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="holidayLevel" value="1st-year">
+                            1st-year
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="holidayLevel" value="2nd-year">
+                            2nd-year
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="holidayLevel" value="3rd-year">
+                            3rd-year
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="holidayLevel" value="4th-year">
+                            4th-year
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="holidayLevel" value="Beginner">
+                            Beginner
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="holidayLevel" value="Intermediate">
+                            Intermediate
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="holidayLevel" value="Advanced">
+                            Advanced
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="deleteHolidayBtn" class="btn btn-danger" style="display: none;">Delete</button>
+                    <button type="submit" class="btn btn-primary">Save Holiday</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Class Detail Popup (hover) -->
+    <div id="classPopup" class="class-popup">
+        <div class="popup-content">
+            <div class="popup-title"></div>
+            <div class="popup-details">
+                <p><strong>Level:</strong> <span class="popup-level"></span></p>
+                <p><strong>Grade:</strong> <span class="popup-grade"></span></p>
+                <p><strong>Book:</strong> <span class="popup-book"></span></p>
+                <p><strong>Lesson:</strong> <span class="popup-lesson"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Print Options Modal -->
+    <div id="printModal" class="modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>Print Options</h2>
+                <button class="modal-close" id="closePrintModal">&times;</button>
+            </div>
+            <form id="printForm">
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="printCalendar" checked>
+                        Print Calendar
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="printSummaryCheck" checked>
+                        Print Summary Page
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="printClassList" checked>
+                        Include Class List
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="printHolidayList" checked>
+                        Include Holiday List
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="printLessonSchedule" checked>
+                        Include Lesson Schedule
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="printCompressionNotes" checked>
+                        Include Compression Notes
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Print</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+

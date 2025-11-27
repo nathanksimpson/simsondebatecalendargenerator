@@ -1,0 +1,757 @@
+/* ============================================
+   CSS Variables & Reset
+   ============================================ */
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary: #64748b;
+    --danger: #dc2626;
+    --success: #16a34a;
+    
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-hover: #f1f5f9;
+    
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    
+    --border-color: #e2e8f0;
+    --border-radius: 8px;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    
+    --holiday-bg: #fef3c7;
+    --holiday-border: #f59e0b;
+    
+    --font-main: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    background: var(--bg-main);
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+/* ============================================
+   App Layout
+   ============================================ */
+.app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.app-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.025em;
+}
+
+.header-controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    font-family: var(--font-main);
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+    background: var(--secondary);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #475569;
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-outline:hover {
+    background: var(--bg-hover);
+    border-color: var(--text-secondary);
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #b91c1c;
+}
+
+/* ============================================
+   Term Selector
+   ============================================ */
+.term-selector {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 16px;
+    background: var(--bg-card);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+}
+
+.term-selector label {
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.term-selector input[type="month"] {
+    padding: 8px 12px;
+    font-family: var(--font-main);
+    font-size: 0.875rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background: var(--bg-main);
+}
+
+.term-selector input[type="month"]:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* ============================================
+   Calendar Container
+   ============================================ */
+.calendar-container {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.month-calendar {
+    background: var(--bg-card);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+.month-header {
+    padding: 16px 20px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+}
+
+.month-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+/* ============================================
+   Calendar Grid
+   ============================================ */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-top: 1px solid var(--border-color);
+}
+
+.calendar-day-header {
+    padding: 12px 8px;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    background: var(--bg-hover);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.calendar-day-header:not(:last-child) {
+    border-right: 1px solid var(--border-color);
+}
+
+.calendar-day {
+    min-height: 100px;
+    padding: 4px;
+    border-bottom: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    position: relative;
+    background: var(--bg-card);
+    transition: background 0.15s ease;
+}
+
+.calendar-day:nth-child(7n) {
+    border-right: none;
+}
+
+.calendar-day:hover {
+    background: var(--bg-hover);
+}
+
+.calendar-day.other-month {
+    background: var(--bg-main);
+}
+
+.calendar-day.other-month .day-number {
+    color: var(--text-muted);
+}
+
+.calendar-day.holiday {
+    /* Background color set dynamically via JS */
+    transition: filter 0.15s ease;
+}
+
+.calendar-day.holiday:hover {
+    filter: brightness(0.95);
+}
+
+.day-number {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    padding: 4px 6px;
+}
+
+.holiday-name {
+    font-size: 0.7rem;
+    /* Color set dynamically via JS */
+    font-weight: 600;
+    padding: 0 6px 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.day-events {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 2px;
+}
+
+/* ============================================
+   Event Bars (Class Lessons)
+   ============================================ */
+.event-bar {
+    padding: 4px 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.event-bar:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.event-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.event-book {
+    font-size: 0.6rem;
+    font-weight: 400;
+    opacity: 0.9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ============================================
+   Modals
+   ============================================ */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--bg-card);
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.2s ease;
+}
+
+.modal-small {
+    max-width: 400px;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h2 {
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+}
+
+.modal-close:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+/* ============================================
+   Forms
+   ============================================ */
+form {
+    padding: 24px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    font-family: var(--font-main);
+    font-size: 0.875rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background: var(--bg-main);
+    transition: all 0.15s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-group input[type="color"] {
+    width: 60px;
+    height: 40px;
+    padding: 2px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+}
+
+.checkbox-group {
+    margin-bottom: 8px;
+}
+
+.level-checkboxes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 12px;
+    background: var(--bg-main);
+    border-radius: var(--border-radius);
+    margin-top: 8px;
+}
+
+.level-checkboxes .checkbox-label {
+    font-size: 0.875rem;
+}
+
+/* Custom Schedule Section */
+.custom-schedule-section {
+    padding: 16px;
+    background: var(--bg-main);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    margin-bottom: 16px;
+}
+
+.section-hint {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+
+.compression-options {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border-color);
+}
+
+.compression-options .checkbox-label {
+    margin-bottom: 8px;
+    font-size: 0.875rem;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* ============================================
+   Class Popup (Hover Details)
+   ============================================ */
+.class-popup {
+    display: none;
+    position: fixed;
+    z-index: 500;
+    pointer-events: none;
+}
+
+.class-popup.active {
+    display: block;
+}
+
+.popup-content {
+    background: var(--bg-card);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    padding: 12px 16px;
+    min-width: 200px;
+    border: 1px solid var(--border-color);
+}
+
+.popup-title {
+    font-weight: 700;
+    font-size: 0.875rem;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.popup-details p {
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+    color: var(--text-secondary);
+}
+
+.popup-details strong {
+    color: var(--text-primary);
+}
+
+/* ============================================
+   Print Summary (Hidden on Screen)
+   ============================================ */
+.print-summary {
+    display: none;
+}
+
+.summary-section {
+    margin-bottom: 24px;
+}
+
+.summary-section h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--primary);
+}
+
+.summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.summary-table th,
+.summary-table td {
+    padding: 8px 12px;
+    text-align: left;
+    border: 1px solid var(--border-color);
+}
+
+.summary-table th {
+    background: var(--bg-hover);
+    font-weight: 600;
+}
+
+.summary-table tr:nth-child(even) {
+    background: var(--bg-main);
+}
+
+.lesson-schedule-item {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: var(--bg-main);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--primary);
+}
+
+.lesson-schedule-item h4 {
+    font-size: 0.875rem;
+    margin-bottom: 8px;
+}
+
+.lesson-schedule-item ul {
+    list-style: none;
+    font-size: 0.8rem;
+}
+
+.lesson-schedule-item li {
+    padding: 2px 0;
+}
+
+#compressionNotes {
+    list-style: none;
+}
+
+#compressionNotes li {
+    padding: 8px 12px;
+    background: #fef3c7;
+    border-left: 4px solid #f59e0b;
+    margin-bottom: 8px;
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    font-size: 0.875rem;
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+@media print {
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    body {
+        background: white;
+        font-size: 10pt;
+    }
+    
+    .app-container {
+        max-width: 100%;
+        padding: 0;
+    }
+    
+    .app-header,
+    .term-selector,
+    .header-controls,
+    .modal,
+    .class-popup {
+        display: none !important;
+    }
+    
+    .calendar-container {
+        gap: 16px;
+    }
+    
+    .month-calendar {
+        box-shadow: none;
+        border: 1px solid #000;
+        page-break-inside: avoid;
+    }
+    
+    .month-header {
+        background: var(--primary) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .calendar-day {
+        min-height: 70px;
+    }
+    
+    .event-bar {
+        font-size: 7pt;
+        padding: 2px 4px;
+    }
+    
+    /* Print Summary */
+    .print-summary {
+        display: block !important;
+        page-break-before: always;
+        padding: 20px;
+    }
+    
+    .print-summary h2 {
+        font-size: 16pt;
+        margin-bottom: 16px;
+        text-align: center;
+    }
+    
+    .summary-table {
+        font-size: 9pt;
+    }
+    
+    .lesson-schedule-item {
+        page-break-inside: avoid;
+    }
+    
+    /* Hide sections based on print options */
+    .print-summary.hide-classes #classSummaryTable,
+    .print-summary.hide-holidays #holidaySummaryTable,
+    .print-summary.hide-schedule #lessonScheduleSummary,
+    .print-summary.hide-compression #compressionNotes {
+        display: none !important;
+    }
+    
+    .print-summary.hide-classes .summary-section:has(#classSummaryTable),
+    .print-summary.hide-holidays .summary-section:has(#holidaySummaryTable),
+    .print-summary.hide-schedule .summary-section:has(#lessonScheduleSummary),
+    .print-summary.hide-compression .summary-section:has(#compressionNotes) {
+        display: none !important;
+    }
+}
+
+/* Hide calendar on print if option unchecked */
+body.hide-calendar-print .calendar-container {
+    display: none !important;
+}
+
+body.hide-summary-print .print-summary {
+    display: none !important;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 768px) {
+    .app-header {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+    }
+    
+    .header-controls {
+        justify-content: center;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .calendar-day {
+        min-height: 80px;
+    }
+    
+    .event-bar {
+        font-size: 0.65rem;
+    }
+}
+
