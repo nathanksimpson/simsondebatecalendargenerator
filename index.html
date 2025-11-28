@@ -13,23 +13,21 @@
     <div class="app-container">
         <!-- Header -->
         <header class="app-header">
-            <h1 data-i18n="appTitle">Class Calendar Planner</h1>
+            <h1>Class Calendar Planner</h1>
             <div class="header-controls">
-                <button id="langToggleBtn" class="btn btn-outline btn-lang">🌐 한국어</button>
-                <button id="addClassBtn" class="btn btn-primary" data-i18n="addClass">+ Add Class</button>
-                <button id="addHolidayBtn" class="btn btn-secondary" data-i18n="addHoliday">+ Add Holiday</button>
-                <button id="exportBtn" class="btn btn-outline" data-i18n="export">Export</button>
-                <button id="importBtn" class="btn btn-outline" data-i18n="import">Import</button>
+                <button id="addClassBtn" class="btn btn-primary">+ Add Class</button>
+                <button id="addHolidayBtn" class="btn btn-secondary">+ Add Holiday</button>
+                <button id="exportBtn" class="btn btn-outline">Export</button>
+                <button id="importBtn" class="btn btn-outline">Import</button>
                 <input type="file" id="importFile" accept=".json" style="display: none;">
-                <button id="printBtn" class="btn btn-outline" data-i18n="print">Print</button>
+                <button id="clearAllBtn" class="btn btn-danger">Clear All Data</button>
+                <button id="printBtn" class="btn btn-outline">Print</button>
             </div>
         </header>
 
-        <!-- Calendar Name & Term Selector -->
+        <!-- Term Selector -->
         <div class="term-selector">
-            <label for="calendarName" data-i18n="calendarName">Calendar Name:</label>
-            <input type="text" id="calendarName" data-i18n-placeholder="calendarNamePlaceholder" placeholder="e.g., Fall 2025 Term">
-            <label for="termStart" data-i18n="termStartMonth">Term Start Month:</label>
+            <label for="termStart">Term Start Month:</label>
             <input type="month" id="termStart" value="">
         </div>
 
@@ -40,20 +38,20 @@
 
         <!-- Print Summary Section (hidden on screen, shown on print) -->
         <div id="printSummary" class="print-summary">
-            <h2 data-i18n="termSummary">Term Summary</h2>
+            <h2>Term Summary</h2>
             
             <div class="summary-section">
-                <h3 data-i18n="classes">Classes</h3>
+                <h3>Classes</h3>
                 <table class="summary-table" id="classSummaryTable">
                     <thead>
                         <tr>
-                            <th data-i18n="className">Class Name</th>
-                            <th data-i18n="level">Level</th>
-                            <th data-i18n="grade">Grade</th>
-                            <th data-i18n="book">Book</th>
-                            <th data-i18n="startDate">Start Date</th>
-                            <th data-i18n="endDate">End Date</th>
-                            <th data-i18n="day">Day</th>
+                            <th>Class Name</th>
+                            <th>Level</th>
+                            <th>Grade</th>
+                            <th>Book</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Day</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -63,13 +61,13 @@
             </div>
 
             <div class="summary-section">
-                <h3 data-i18n="holidays">Holidays</h3>
+                <h3>Holidays</h3>
                 <table class="summary-table" id="holidaySummaryTable">
                     <thead>
                         <tr>
-                            <th data-i18n="holidayName">Holiday Name</th>
-                            <th data-i18n="date">Date</th>
-                            <th data-i18n="appliesTo">Applies To</th>
+                            <th>Holiday Name</th>
+                            <th>Date</th>
+                            <th>Applies To</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -79,14 +77,14 @@
             </div>
 
             <div class="summary-section">
-                <h3 data-i18n="lessonSchedule">Lesson Schedule</h3>
+                <h3>Lesson Schedule</h3>
                 <div id="lessonScheduleSummary">
                     <!-- Filled by JavaScript -->
                 </div>
             </div>
 
             <div class="summary-section">
-                <h3 data-i18n="compressionNotes">Compression Notes</h3>
+                <h3>Compression Notes</h3>
                 <ul id="compressionNotes">
                     <!-- Filled by JavaScript -->
                 </ul>
@@ -98,79 +96,72 @@
     <div id="classModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="classModalTitle" data-i18n="addNewClass">Add New Class</h2>
+                <h2 id="classModalTitle">Add New Class</h2>
                 <button class="modal-close" id="closeClassModal">&times;</button>
             </div>
             <form id="classForm">
                 <input type="hidden" id="classId" value="">
                 
-                <div class="form-group autocomplete-wrapper">
-                    <label for="className" data-i18n="className">Class Name</label>
-                    <input type="text" id="className" required data-i18n-placeholder="classNamePlaceholder" placeholder="e.g., Debate" autocomplete="off">
-                    <div id="classNameSuggestions" class="autocomplete-dropdown"></div>
+                <div class="form-group">
+                    <label for="className">Class Name</label>
+                    <input type="text" id="className" required placeholder="e.g., Debate">
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="classLevel" data-i18n="classLevel">Class Level</label>
+                        <label for="classLevel">Class Level</label>
                         <select id="classLevel" required>
-                            <option value="" data-i18n="selectLevel">Select Level</option>
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="C">C</option>
+                            <option value="">Select Level</option>
+                            <option value="1st-year">1st-year</option>
+                            <option value="2nd-year">2nd-year</option>
+                            <option value="3rd-year">3rd-year</option>
+                            <option value="4th-year">4th-year</option>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="classGrade" data-i18n="grade">Grade</label>
-                        <select id="classGrade" required>
-                            <option value="" data-i18n="selectGrade">Select Grade</option>
-                            <option value="중1">중1</option>
-                            <option value="중2">중2</option>
-                            <option value="중3">중3</option>
-                        </select>
+                        <label for="classGrade">Grade</label>
+                        <input type="text" id="classGrade" required placeholder="e.g., Grade 5">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="classBook" data-i18n="book">Book</label>
-                    <input type="text" id="classBook" required data-i18n-placeholder="bookPlaceholder" placeholder="e.g., Debate 2025 Fall Nov. A">
-                </div>
-
-                <div class="form-group">
-                    <label for="classNotes" data-i18n="notes">Notes</label>
-                    <textarea id="classNotes" rows="2" data-i18n-placeholder="notesPlaceholder" placeholder="Optional notes about this class..."></textarea>
+                    <label for="classBook">Book</label>
+                    <input type="text" id="classBook" required placeholder="e.g., Debate 2025 Fall Nov. A">
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="classStartDate" data-i18n="startDate">Start Date</label>
+                        <label for="classStartDate">Start Date</label>
                         <input type="date" id="classStartDate" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="classEndDate" data-i18n="endDate">End Date</label>
+                        <label for="classEndDate">End Date</label>
                         <input type="date" id="classEndDate" required>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="classDayOfWeek" data-i18n="dayOfWeek">Day of Week</label>
+                        <label for="classDayOfWeek">Day of Week</label>
                         <select id="classDayOfWeek">
-                            <option value="" data-i18n="selectDay">Select Day</option>
-                            <option value="0" data-i18n="sunday">Sunday</option>
-                            <option value="1" data-i18n="monday">Monday</option>
-                            <option value="2" data-i18n="tuesday">Tuesday</option>
-                            <option value="3" data-i18n="wednesday">Wednesday</option>
-                            <option value="4" data-i18n="thursday">Thursday</option>
-                            <option value="5" data-i18n="friday">Friday</option>
-                            <option value="6" data-i18n="saturday">Saturday</option>
+                            <option value="">Select Day</option>
+                            <option value="0">Sunday</option>
+                            <option value="1">Monday</option>
+                            <option value="2">Tuesday</option>
+                            <option value="3">Wednesday</option>
+                            <option value="4">Thursday</option>
+                            <option value="5">Friday</option>
+                            <option value="6">Saturday</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="classColor" data-i18n="color">Color</label>
+                        <label for="classColor">Color</label>
                         <input type="color" id="classColor" value="#e67e22">
                     </div>
                 </div>
@@ -179,48 +170,48 @@
                 <div class="form-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="customScheduleEnabled">
-                        <span data-i18n="customSchedule">Custom Schedule (manually pick dates for each lesson)</span>
+                        Custom Schedule (manually pick dates for each lesson)
                     </label>
                 </div>
 
                 <div id="customScheduleSection" class="custom-schedule-section" style="display: none;">
-                    <p class="section-hint" data-i18n="selectDatesHint">Select specific dates for each lesson day:</p>
+                    <p class="section-hint">Select specific dates for each lesson day:</p>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="customDay1" data-i18n="day1">Day 1</label>
+                            <label for="customDay1">Day 1</label>
                             <input type="date" id="customDay1">
                         </div>
                         <div class="form-group">
-                            <label for="customDay2" data-i18n="day2">Day 2</label>
+                            <label for="customDay2">Day 2</label>
                             <input type="date" id="customDay2">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="customDay3" data-i18n="day3">Day 3</label>
+                            <label for="customDay3">Day 3</label>
                             <input type="date" id="customDay3">
                         </div>
                         <div class="form-group">
-                            <label for="customDay4" data-i18n="day4">Day 4</label>
+                            <label for="customDay4">Day 4</label>
                             <input type="date" id="customDay4">
                         </div>
                     </div>
                     <div class="compression-options">
-                        <p class="section-hint" data-i18n="compressionHint">Compression options (leave date empty to combine):</p>
+                        <p class="section-hint">Compression options (leave date empty to combine):</p>
                         <label class="checkbox-label">
                             <input type="checkbox" id="compressDay12">
-                            <span data-i18n="combineDay12">Combine Day 1+2 on Day 1's date</span>
+                            Combine Day 1+2 on Day 1's date
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" id="compressDay34">
-                            <span data-i18n="combineDay34">Combine Day 3+4 on Day 3's date</span>
+                            Combine Day 3+4 on Day 3's date
                         </label>
                     </div>
                 </div>
 
                 <div class="form-actions">
-                    <button type="button" id="deleteClassBtn" class="btn btn-danger" style="display: none;" data-i18n="delete">Delete</button>
-                    <button type="submit" class="btn btn-primary" data-i18n="saveClass">Save Class</button>
+                    <button type="button" id="deleteClassBtn" class="btn btn-danger" style="display: none;">Delete</button>
+                    <button type="submit" class="btn btn-primary">Save Class</button>
                 </div>
             </form>
         </div>
@@ -230,89 +221,94 @@
     <div id="holidayModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="holidayModalTitle" data-i18n="addHolidayTitle">Add Holiday</h2>
+                <h2 id="holidayModalTitle">Add Holiday</h2>
                 <button class="modal-close" id="closeHolidayModal">&times;</button>
             </div>
             <form id="holidayForm">
                 <input type="hidden" id="holidayId" value="">
                 
                 <div class="form-group">
-                    <label for="holidayName" data-i18n="holidayName">Holiday/Event Name</label>
-                    <input type="text" id="holidayName" required data-i18n-placeholder="holidayNamePlaceholder" placeholder="e.g., Thanksgiving">
+                    <label for="holidayName">Holiday/Event Name</label>
+                    <input type="text" id="holidayName" required placeholder="e.g., Thanksgiving">
                 </div>
 
                 <div class="form-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="holidayIsRange">
-                        <span data-i18n="dateRange">Date Range (multiple days)</span>
+                        Date Range (multiple days)
                     </label>
                 </div>
 
                 <div id="holidaySingleDate" class="form-group">
-                    <label for="holidayDate" data-i18n="date">Date</label>
+                    <label for="holidayDate">Date</label>
                     <input type="date" id="holidayDate">
                 </div>
 
                 <div id="holidayDateRange" class="form-row" style="display: none;">
                     <div class="form-group">
-                        <label for="holidayStartDate" data-i18n="startDate">Start Date</label>
+                        <label for="holidayStartDate">Start Date</label>
                         <input type="date" id="holidayStartDate">
                     </div>
                     <div class="form-group">
-                        <label for="holidayEndDate" data-i18n="endDate">End Date</label>
+                        <label for="holidayEndDate">End Date</label>
                         <input type="date" id="holidayEndDate">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="holidayBgColor" data-i18n="bgColor">Background Color</label>
+                        <label for="holidayBgColor">Background Color</label>
                         <input type="color" id="holidayBgColor" value="#fef3c7">
                     </div>
                     <div class="form-group">
-                        <label for="holidayTextColor" data-i18n="textColor">Text Color</label>
+                        <label for="holidayTextColor">Text Color</label>
                         <input type="color" id="holidayTextColor" value="#b45309">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label data-i18n="appliesTo">Applies To</label>
+                    <label>Applies To</label>
                     <div class="checkbox-group">
                         <label class="checkbox-label">
-                            <input type="checkbox" id="holidayAllClasses" checked>
-                            <span data-i18n="allClasses">All Classes</span>
+                            <input type="checkbox" id="holidayAllLevels" checked>
+                            All Levels
                         </label>
                     </div>
-                    <div id="holidayFilterSection" class="holiday-filter-section" style="display: none;">
-                        <div class="filter-group">
-                            <label class="filter-label" data-i18n="byGrade">By Grade:</label>
-                            <div class="checkbox-group grade-checkboxes">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="holidayGrade" value="중1">
-                                    중1
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="holidayGrade" value="중2">
-                                    중2
-                                </label>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="holidayGrade" value="중3">
-                                    중3
-                                </label>
-                            </div>
-                        </div>
-                        <div class="filter-group">
-                            <label class="filter-label" data-i18n="byClassName">By Class Name:</label>
-                            <div id="holidayClassCheckboxes" class="checkbox-group class-checkboxes">
-                                <!-- Dynamically populated by JavaScript -->
-                            </div>
-                        </div>
+                    <div id="holidayLevelCheckboxes" class="checkbox-group level-checkboxes" style="display: none;">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="holidayLevel" value="1st-year">
+                            1st-year
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="holidayLevel" value="2nd-year">
+                            2nd-year
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="holidayLevel" value="3rd-year">
+                            3rd-year
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="holidayLevel" value="4th-year">
+                            4th-year
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="holidayLevel" value="Beginner">
+                            Beginner
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="holidayLevel" value="Intermediate">
+                            Intermediate
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="holidayLevel" value="Advanced">
+                            Advanced
+                        </label>
                     </div>
                 </div>
 
                 <div class="form-actions">
-                    <button type="button" id="deleteHolidayBtn" class="btn btn-danger" style="display: none;" data-i18n="delete">Delete</button>
-                    <button type="submit" class="btn btn-primary" data-i18n="saveHoliday">Save Holiday</button>
+                    <button type="button" id="deleteHolidayBtn" class="btn btn-danger" style="display: none;">Delete</button>
+                    <button type="submit" class="btn btn-primary">Save Holiday</button>
                 </div>
             </form>
         </div>
@@ -323,10 +319,10 @@
         <div class="popup-content">
             <div class="popup-title"></div>
             <div class="popup-details">
-                <p><strong data-i18n="level">Level:</strong> <span class="popup-level"></span></p>
-                <p><strong data-i18n="grade">Grade:</strong> <span class="popup-grade"></span></p>
-                <p><strong data-i18n="book">Book:</strong> <span class="popup-book"></span></p>
-                <p><strong data-i18n="lesson">Lesson:</strong> <span class="popup-lesson"></span></p>
+                <p><strong>Level:</strong> <span class="popup-level"></span></p>
+                <p><strong>Grade:</strong> <span class="popup-grade"></span></p>
+                <p><strong>Book:</strong> <span class="popup-book"></span></p>
+                <p><strong>Lesson:</strong> <span class="popup-lesson"></span></p>
             </div>
         </div>
     </div>
@@ -335,48 +331,48 @@
     <div id="printModal" class="modal">
         <div class="modal-content modal-small">
             <div class="modal-header">
-                <h2 data-i18n="printOptions">Print Options</h2>
+                <h2>Print Options</h2>
                 <button class="modal-close" id="closePrintModal">&times;</button>
             </div>
             <form id="printForm">
                 <div class="form-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="printCalendar" checked>
-                        <span data-i18n="printCalendar">Print Calendar</span>
+                        Print Calendar
                     </label>
                 </div>
                 <div class="form-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="printSummaryCheck" checked>
-                        <span data-i18n="printSummaryPage">Print Summary Page</span>
+                        Print Summary Page
                     </label>
                 </div>
                 <div class="form-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="printClassList" checked>
-                        <span data-i18n="includeClassList">Include Class List</span>
+                        Include Class List
                     </label>
                 </div>
                 <div class="form-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="printHolidayList" checked>
-                        <span data-i18n="includeHolidayList">Include Holiday List</span>
+                        Include Holiday List
                     </label>
                 </div>
                 <div class="form-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="printLessonSchedule" checked>
-                        <span data-i18n="includeLessonSchedule">Include Lesson Schedule</span>
+                        Include Lesson Schedule
                     </label>
                 </div>
                 <div class="form-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="printCompressionNotes" checked>
-                        <span data-i18n="includeCompressionNotes">Include Compression Notes</span>
+                        Include Compression Notes
                     </label>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" data-i18n="print">Print</button>
+                    <button type="submit" class="btn btn-primary">Print</button>
                 </div>
             </form>
         </div>
