@@ -12,6 +12,7 @@ const translations = {
         export: 'Export',
         import: 'Import',
         print: 'Print',
+        clearAllData: 'Clear All Data',
         langToggle: '🌐 한국어',
         
         // Term Selector
@@ -109,6 +110,8 @@ const translations = {
         noCompressedDays: 'No classes have compressed days.',
         confirmDeleteClass: 'Are you sure you want to delete this class?',
         confirmDeleteHoliday: 'Are you sure you want to delete this holiday?',
+        confirmClearAllData: 'Are you sure you want to clear all data? This will delete all classes, holidays, and calendar settings. This action cannot be undone.',
+        clearDataSuccess: 'All data has been cleared.',
         importSuccess: 'Data imported successfully!',
         invalidFile: 'Invalid file format. Please select a valid calendar export file.',
         errorReadingFile: 'Error reading file. Please select a valid JSON file.',
@@ -122,6 +125,7 @@ const translations = {
         export: '내보내기',
         import: '가져오기',
         print: '인쇄',
+        clearAllData: '모든 데이터 지우기',
         langToggle: '🌐 English',
         
         // Term Selector
@@ -219,6 +223,8 @@ const translations = {
         noCompressedDays: '압축된 수업이 없습니다.',
         confirmDeleteClass: '이 수업을 삭제하시겠습니까?',
         confirmDeleteHoliday: '이 휴일을 삭제하시겠습니까?',
+        confirmClearAllData: '모든 데이터를 지우시겠습니까? 모든 수업, 휴일 및 캘린더 설정이 삭제됩니다. 이 작업은 취소할 수 없습니다.',
+        clearDataSuccess: '모든 데이터가 지워졌습니다.',
         importSuccess: '데이터를 성공적으로 가져왔습니다!',
         invalidFile: '잘못된 파일 형식입니다. 유효한 캘린더 내보내기 파일을 선택하세요.',
         errorReadingFile: '파일을 읽는 중 오류가 발생했습니다. 유효한 JSON 파일을 선택하세요.',
@@ -432,6 +438,7 @@ function setupEventListeners() {
     document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
     document.getElementById('importFile').addEventListener('change', importData);
     document.getElementById('printBtn').addEventListener('click', () => openModal(elements.printModal));
+    document.getElementById('clearDataBtn').addEventListener('click', clearAllData);
     
     // Modal Close Buttons
     document.getElementById('closeClassModal').addEventListener('click', () => closeModal(elements.classModal));
@@ -1628,6 +1635,45 @@ function importData(e) {
     
     // Reset file input
     e.target.value = '';
+}
+
+function clearAllData() {
+    // Show confirmation dialog
+    if (!confirm(t('confirmClearAllData'))) {
+        return;
+    }
+    
+    // Clear localStorage
+    localStorage.removeItem('classCalendarData');
+    
+    // Reset appData to default values
+    appData = {
+        classes: [],
+        holidays: [],
+        termStart: null,
+        calendarName: ''
+    };
+    
+    // Reset form inputs
+    elements.calendarName.value = '';
+    elements.termStart.value = '';
+    
+    // Set default term start to current month
+    const now = new Date();
+    appData.termStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    elements.termStart.value = appData.termStart;
+    
+    // Save the reset data (with default term start)
+    saveData();
+    
+    // Re-render calendar
+    renderCalendar();
+    
+    // Update calendar title
+    updateCalendarTitle();
+    
+    // Show success message
+    alert(t('clearDataSuccess'));
 }
 
 // ============================================
